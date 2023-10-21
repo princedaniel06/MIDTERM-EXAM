@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subject Schedule Form</title>
+    <style>
+        body {
+            background-image: url(jamor.jpg);
+           background-repeat: no repeat;
+           background-attachment: fixed;
+           background-size: 100% 100%;
+           font-family: arial, sans-serif;
+           margin: 20px;
+
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        table, th, td {
+            border: 1px solid #483bc2;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            width: 80%;
+            margin: 20px auto;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #107518;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Subject Schedule Form</h2>
+    <form id="scheduleForm">
+        <input type="hidden" id="editIndex" value="-1">
+        
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" required>
+        
+        <label for="day">Day:</label>
+        <select id="day" required>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+        </select>
+        
+        <label for="time">Time:</label>
+        <input type="time" id="time" required>
+        
+        <label for="room">Room:</label>
+        <input type="text" id="room" required>
+        
+        <label for="instructor">Instructor:</label>
+        <input type="text" id="instructor" required>
+        
+        <button type="button" onclick="addOrUpdateSchedule()">Submit</button>
+    </form>
+
+    <h2>Schedule List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Room</th>
+                <th>Instructor</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="scheduleList"></tbody>
+    </table>
+
+    <script>
+        const schedules = [];
+
+        function addOrUpdateSchedule() {
+            const editIndex = parseInt(document.getElementById("editIndex").value);
+            if (editIndex === -1) {
+                addSchedule();
+            } else {
+                updateSchedule(editIndex);
+            }
+        }
+
+        function addSchedule() {
+            const subject = document.getElementById("subject").value;
+            const day = document.getElementById("day").value;
+            const time = document.getElementById("time").value;
+            const room = document.getElementById("room").value;
+            const instructor = document.getElementById("instructor").value;
+
+            const schedule = {
+                subject,
+                day,
+                time,
+                room,
+                instructor
+            };
+
+            schedules.push(schedule);
+
+            document.getElementById("scheduleForm").reset();
+            document.getElementById("editIndex").value = -1;
+            displaySchedules();
+        }
+
+        function displaySchedules() {
+            const scheduleList = document.getElementById("scheduleList");
+            scheduleList.innerHTML = "";
+
+            schedules.forEach((schedule, index) => {
+                const row = scheduleList.insertRow();
+                row.innerHTML = `
+                    <td>${schedule.subject}</td>
+                    <td>${schedule.day}</td>
+                    <td>${schedule.time}</td>
+                    <td>${schedule.room}</td>
+                    <td>${schedule.instructor}</td>
+                    <td>
+                        <button onclick="editSchedule(${index})">Edit</button>
+                        <button onclick="removeSchedule(${index})">Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function editSchedule(index) {
+            const schedule = schedules[index];
+            document.getElementById("subject").value = schedule.subject;
+            document.getElementById("day").value = schedule.day;
+            document.getElementById("time").value = schedule.time;
+            document.getElementById("room").value = schedule.room;
+            document.getElementById("instructor").value = schedule.instructor;
+            document.getElementById("editIndex").value = index;
+        }
+
+        function updateSchedule(index) {
+            const subject = document.getElementById("subject").value;
+            const day = document.getElementById("day").value;
+            const time = document.getElementById("time").value;
+            const room = document.getElementById("room").value;
+            const instructor = document.getElementById("instructor").value;
+
+            schedules[index] = {
+                subject,
+                day,
+                time,
+                room,
+                instructor
+            };
+
+            document.getElementById("scheduleForm").reset();
+            document.getElementById("editIndex").value = -1;
+            displaySchedules();
+        }
+
+        function removeSchedule(index) {
+            schedules.splice(index, 1);
+            displaySchedules();
+        }
+
+        // Initial display
+        displaySchedules();
+    </script>
+</body>
+</html>
